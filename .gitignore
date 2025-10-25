@@ -10,6 +10,8 @@
 /[Aa]ssets/Settings*
 /[Aa]ssets/TextMesh Pro*
 /[Aa]ssets/UniversalRenderPipelineGlobalSettings*
+/[Pp]rojectSettings*
+/.idea*
 # ----
 
 .utmp/
