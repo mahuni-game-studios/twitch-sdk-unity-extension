@@ -1,6 +1,8 @@
 # Unity Twitch SDK Extension by Mahuni Game Studios
 
-[![Downloads](https://img.shields.io/github/downloads/mahuni-game-studios/twitch-sdk-unity-extension/total.svg)](https://github.com/danqzq/unity-twitch-chat-interactions/releases/) [![Latest Version](https://img.shields.io/github/v/release/mahuni-game-studios/twitch-sdk-unity-extension)](https://github.com/danqzq/unity-twitch-chat-interactions/releases/tag/v1.31)
+[![Downloads](https://img.shields.io/github/downloads/mahuni-game-studios/twitch-sdk-unity-extension/total.svg)](https://github.com/mahuni-game-studios/twitch-sdk-unity-extension/releases/) 
+[![Latest Version](https://img.shields.io/github/v/release/mahuni-game-studios/twitch-sdk-unity-extension)](https://github.com/mahuni-game-studios/twitch-sdk-unity-extension/releases/tag/v1.0)
+
 
 An extension to the Unity package available from Twitch that will allow you to easily implement Twitch API calls into your game!
 
@@ -99,8 +101,8 @@ To use the provided `TwitchSDKExtension_Demo` scene, the `TextMeshPro` package i
 ### Setup project
 1. Either open this project or your own project in the Unity Editor
 2. Drag and drop the downloaded Twitch SDK *.unitypackage* into your project. By default, it will place itself under '*/[..]/Assets/Plugins/*'. If the folder doesn't exist yet, Unity will create it for you.
-   - <img src="Documentation/twitch-package-import.png" alt="Twitch Package Import Screenshot" width="300" title="Twitch Package Import Screenshot"/>
+   - <img src="twitch-package-import.png" alt="Twitch Package Import Screenshot" width="300" title="Twitch Package Import Screenshot"/>
    - <font color="orange">For Windows, be sure to just check **either** *x86* **or** *x86_64* folder only and not import both, else you will get exceptions due to duplicate *R66_core.dll!*</font>
 3. Find and select the `TwitchSDKSettings` asset under '*/[..]/Assets/Plugins/Resources/TwitchSDKSettings.asset*' and copy your `Client ID` into the `Twitch Client ID` input field shown in the inspector
-   - <img src="Documentation/twitch-sdk-settings.png" alt="Twitch SDK Settings Asset Screenshot" width="600"/>
+   - <img src="twitch-sdk-settings.png" alt="Twitch SDK Settings Asset Screenshot" width="600"/>
 4. Start using the `Twitch Authentication` and / or the `TwitchPoll` scripts right away, or take a look into the `Demo` scene
