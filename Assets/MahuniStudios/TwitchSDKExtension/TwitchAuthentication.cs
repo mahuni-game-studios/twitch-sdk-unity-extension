@@ -71,7 +71,7 @@ namespace Mahuni.Twitch.Extension
                 {
                     authenticationState = AuthenticationStatus.Error;
                     OnTwitchSdkAuthenticationStateChanged?.Invoke(authenticationState);
-                    Debug.LogWarning($"Exception catched: {API.GetAuthenticationInfo(GetScopes()).Exception}");
+                    Debug.LogWarning($"Exception caught: {API.GetAuthenticationInfo(GetScopes()).Exception}");
                     yield break;
                 }
                 
