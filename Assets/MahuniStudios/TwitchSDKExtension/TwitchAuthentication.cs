@@ -15,10 +15,10 @@ namespace Mahuni.Twitch.Extension
     /// </summary>
     public static class TwitchAuthentication
     {
-        public static event Action<AuthenticationStatus> OnTwitchSdkAuthenticationStateChanged;
+        public static event Action<AuthenticationStatus> OnTwitchSdkAuthenticationStatusChanged;
         public static event Action OnTwitchSdkAuthenticated;
         public static event Action OnTwitchSdkReadyForAuthentication;
-        private static AuthenticationStatus authenticationState;
+        private static AuthenticationStatus authenticationStatus;
         private static GameTask<AuthenticationInfo> authInfoTask;
         private static string authenticationUrl;
         
@@ -31,6 +31,24 @@ namespace Mahuni.Twitch.Extension
             LoggedOut,
             Authenticated
         }
+        
+        /// <summary>
+        /// Get if the application is authenticated and Twitch SDK methods can thereby be used
+        /// </summary>
+        /// <returns>True if the application is authenticated, false if authentication is not completed</returns>
+        public static bool IsAuthenticated()
+        {
+            return authenticationStatus == AuthenticationStatus.Authenticated;
+        }
+        
+        /// <summary>
+        /// Reset the authentication status by logging out
+        /// </summary>
+        public static void Reset()
+        {
+            API.LogOut();
+            authenticationStatus = AuthenticationStatus.LoggedOut;
+        }
 
         /// <summary>
         /// Start the validation process to retrieve authentication information
@@ -40,16 +58,7 @@ namespace Mahuni.Twitch.Extension
         /// False to wait for an external trigger to call <see cref="OpenAuthenticationURL"/> method.</param>
         public static void StartAuthenticationValidation(MonoBehaviour monoBehaviour, bool autoOpenBrowser)
         {
-            monoBehaviour.StartCoroutine(UpdateAuthenticationState(autoOpenBrowser));
-        }
-        
-        /// <summary>
-        /// Get if the application is authenticated and Twitch SDK methods can thereby be used
-        /// </summary>
-        /// <returns>True if the application is authenticated, false if authentication is not completed</returns>
-        public static bool IsAuthenticated()
-        {
-            return authenticationState == AuthenticationStatus.Authenticated;
+            monoBehaviour.StartCoroutine(UpdateAuthenticationStatus(autoOpenBrowser));
         }
 
         /// <summary>
@@ -58,37 +67,37 @@ namespace Mahuni.Twitch.Extension
         /// <param name="autoOpenBrowser">True to open the browser as soon as the information is ready.
         /// False to wait for an external trigger to call <see cref="OpenAuthenticationURL"/> method.</param>
         /// <returns>null</returns>
-        private static IEnumerator UpdateAuthenticationState(bool autoOpenBrowser)
+        private static IEnumerator UpdateAuthenticationStatus(bool autoOpenBrowser)
         {
             AuthenticationInfo userAuthInfo = null;
             authenticationUrl = string.Empty;
-            authenticationState = AuthenticationStatus.Unknown;
+            authenticationStatus = AuthenticationStatus.Unknown;
 
             while (userAuthInfo == null)
             {
                 // If we detect an exception, it can mean that the Client ID is not set correctly, so we stop right here
                 if (API.GetAuthenticationInfo(GetScopes()) != null && API.GetAuthenticationInfo(GetScopes()).Exception != null)
                 {
-                    authenticationState = AuthenticationStatus.Error;
-                    OnTwitchSdkAuthenticationStateChanged?.Invoke(authenticationState);
+                    authenticationStatus = AuthenticationStatus.Error;
+                    OnTwitchSdkAuthenticationStatusChanged?.Invoke(authenticationStatus);
                     Debug.LogWarning($"Exception caught: {API.GetAuthenticationInfo(GetScopes()).Exception}");
                     yield break;
                 }
                 
-                UpdateAuthenticationState();
+                UpdateAuthenticationStatus();
 
                 // If we are already authenticated, we can stop right here
-                if (authenticationState == AuthenticationStatus.Authenticated)
+                if (authenticationStatus == AuthenticationStatus.Authenticated)
                 {
                     OnTwitchSdkAuthenticated?.Invoke();
                     yield break;
                 }
 
-                if (authenticationState == AuthenticationStatus.LoggedOut)
+                if (authenticationStatus == AuthenticationStatus.LoggedOut)
                 {
                     authInfoTask ??= API.GetAuthenticationInfo(GetScopes());
                 }
-                else if (authenticationState == AuthenticationStatus.Waiting)
+                else if (authenticationStatus == AuthenticationStatus.Waiting)
                 {
                     userAuthInfo = API.GetAuthenticationInfo(GetScopes()).MaybeResult;
                 }
@@ -102,9 +111,9 @@ namespace Mahuni.Twitch.Extension
             OnTwitchSdkReadyForAuthentication?.Invoke();
 
             // Wait for authentication to be confirmed
-            while (authenticationState != AuthenticationStatus.Authenticated)
+            while (authenticationStatus != AuthenticationStatus.Authenticated)
             {
-                UpdateAuthenticationState();
+                UpdateAuthenticationStatus();
                 yield return null;
             }
 
@@ -163,34 +172,34 @@ namespace Mahuni.Twitch.Extension
         }
         
         /// <summary>
-        /// Update the authentication state and invoke the <see cref="OnTwitchSdkAuthenticationStateChanged"/> event if it has changed 
+        /// Update the authentication state and invoke the <see cref="OnTwitchSdkAuthenticationStatusChanged"/> event if it has changed 
         /// </summary>
-        private static void UpdateAuthenticationState()
+        private static void UpdateAuthenticationStatus()
         {
             AuthStatus newState = API.GetAuthState().MaybeResult.Status;
-            AuthenticationStatus translatedState;
+            AuthenticationStatus translatedStatus;
             switch (newState)
             {
                 case AuthStatus.LoggedOut:
-                    translatedState = AuthenticationStatus.LoggedOut;
+                    translatedStatus = AuthenticationStatus.LoggedOut;
                     break;
                 case AuthStatus.Loading:
-                    translatedState = AuthenticationStatus.Loading;
+                    translatedStatus = AuthenticationStatus.Loading;
                     break;
                 case AuthStatus.WaitingForCode:
-                    translatedState = AuthenticationStatus.Waiting;
+                    translatedStatus = AuthenticationStatus.Waiting;
                     break;
                 case AuthStatus.LoggedIn:
-                    translatedState = AuthenticationStatus.Authenticated;
+                    translatedStatus = AuthenticationStatus.Authenticated;
                     break;
                 default:
-                    translatedState = AuthenticationStatus.Unknown;
+                    translatedStatus = AuthenticationStatus.Unknown;
                     break;
             }
             
-            bool hasStateChanged = translatedState != authenticationState;
-            authenticationState = translatedState;
-            if (hasStateChanged) OnTwitchSdkAuthenticationStateChanged?.Invoke(authenticationState);
+            bool hasStateChanged = translatedStatus != authenticationStatus;
+            authenticationStatus = translatedStatus;
+            if (hasStateChanged) OnTwitchSdkAuthenticationStatusChanged?.Invoke(authenticationStatus);
         }
     }
 }

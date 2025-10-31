@@ -105,4 +105,4 @@ To use the provided `TwitchSDKExtension_Demo` scene, the `TextMeshPro` package i
    - <font color="orange">For Windows, be sure to just check **either** *x86* **or** *x86_64* folder only and not import both, else you will get exceptions due to duplicate *R66_core.dll!*</font>
 3. Find and select the `TwitchSDKSettings` asset under '*/[..]/Assets/Plugins/Resources/TwitchSDKSettings.asset*' and copy your `Client ID` into the `Twitch Client ID` input field shown in the inspector
    - <img src="twitch-sdk-settings.png" alt="Twitch SDK Settings Asset Screenshot" width="600"/>
-4. Start using the `Twitch Authentication` and / or the `TwitchPoll` scripts right away, or take a look into the `Demo` scene
+4. Start using the `TwitchAuthentication` and / or the `TwitchPoll` scripts right away, or take a look into the `TwitchSDKExtension_Demo` scene to find an easy example implementation.

@@ -37,7 +37,7 @@ public class TwitchSDKExtensionDemoUI : MonoBehaviour
     private void Start()
     {
         // Initialize authentication
-        TwitchAuthentication.OnTwitchSdkAuthenticationStateChanged += OnTwitchSdkAuthenticationStateChanged;
+        TwitchAuthentication.OnTwitchSdkAuthenticationStatusChanged += OnTwitchSdkAuthenticationStatusChanged;
         TwitchAuthentication.OnTwitchSdkAuthenticated += OnTwitchSdkAuthenticated;
         TwitchAuthentication.OnTwitchSdkReadyForAuthentication += OnTwitchSdkReadyForAuthentication;
         authenticateButton.onClick.AddListener(OnAuthenticateButtonClicked);
@@ -108,7 +108,7 @@ public class TwitchSDKExtensionDemoUI : MonoBehaviour
     /// Callback when the authentication state has changed in the backend
     /// </summary>
     /// <param name="authenticationStatus">The status the authentication changed into</param>
-    private void OnTwitchSdkAuthenticationStateChanged(TwitchAuthentication.AuthenticationStatus authenticationStatus)
+    private void OnTwitchSdkAuthenticationStatusChanged(TwitchAuthentication.AuthenticationStatus authenticationStatus)
     {
         string state = "Authentication state: ";
         switch (authenticationStatus)
@@ -247,7 +247,7 @@ public class TwitchSDKExtensionDemoUI : MonoBehaviour
     /// </summary>
     private void OnLogoutButtonClicked()
     {
-        Twitch.API.LogOut();
+        TwitchAuthentication.Reset();
         StartAuthenticationValidation();
     }
 

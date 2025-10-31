@@ -1,0 +1,1 @@
+./Assets/MahuniStudios/TwitchSDKExtension/Documentation/LICENSE.md
